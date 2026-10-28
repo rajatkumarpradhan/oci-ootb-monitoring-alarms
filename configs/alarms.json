@@ -1,0 +1,42 @@
+{
+  "description": "Example alarm definitions mirroring the documented OCI console fields (metric, interval, statistic, trigger rule, trigger delay, severity, repeat frequency, suppression, destinations). Synthetic destinations; create real topics in OCI Notifications to use them.",
+  "alarms": [
+    {
+      "name": "High CPU on web-1",
+      "severity": "WARNING",
+      "query": "CpuUtilization[1m]{resourceDisplayName=\"web-1\"}.mean()",
+      "trigger": {"operator": "between", "values": [60, 80]},
+      "trigger_delay_minutes": 3,
+      "repeat_minutes": 60,
+      "destinations": ["operations-team"]
+    },
+    {
+      "name": "CPU saturation on web-1",
+      "severity": "CRITICAL",
+      "query": "CpuUtilization[1m]{resourceDisplayName=\"web-1\"}.mean()",
+      "trigger": {"operator": "gt", "values": [80]},
+      "trigger_delay_minutes": 2,
+      "repeat_minutes": 30,
+      "suppression_minutes": 45,
+      "destinations": ["operations-team", "on-call"]
+    },
+    {
+      "name": "VCN packet drop (egress security list)",
+      "severity": "WARNING",
+      "query": "VnicEgressSecurityListDrops[1m]{vnic=\"app-vnic-1\"}.sum()",
+      "trigger": {"operator": "gt", "values": [0]},
+      "trigger_delay_minutes": 0,
+      "repeat_minutes": 1440,
+      "destinations": ["network-ops"]
+    },
+    {
+      "name": "Load balancer unhealthy backend",
+      "severity": "CRITICAL",
+      "query": "UnHealthyBackendServers[1m]{backendSetName=\"app-bes\"}.max()",
+      "trigger": {"operator": "gte", "values": [1]},
+      "trigger_delay_minutes": 1,
+      "repeat_minutes": 15,
+      "destinations": ["operations-team", "on-call"]
+    }
+  ]
+}
